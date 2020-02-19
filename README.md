@@ -1,5 +1,7 @@
 # mapAPI v0.1
 
+Zurzeit erreichbar unter http://wulfheart.pythonanywhere.com.
+
 ## [GET] /variants
 
 ```json
