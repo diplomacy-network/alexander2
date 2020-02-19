@@ -3,13 +3,20 @@
 ## [GET] /variants
 
 ```json
-
+["standard", "ancient_mediterrean"]
 ```
 
 
 ## [GET] /variants/{variant-name}
 
+**Response:** 
 ```json
+{
+    "name": "standard",
+    "powers": [
+        "FRANCE", "ENGLAND", "GERMANY"
+    ] 
+}
 
 ```
 
@@ -17,9 +24,15 @@
 
 Gets a basic game instance of a variant
 
+**Response:**
+
+```
+Refer to ## [POST] /adjudicate
+```
+
 ## [POST] /adjudicate
 
-### Request
+**Request:** 
 
 ```json
 {
@@ -35,13 +48,26 @@ Gets a basic game instance of a variant
 }
 ```
 
-### Response
+**Response:** 
 
 ```json
 {
-    "next_phase": "S1901M",
+    "phase": "S1901M",
     "svg_with_orders": "",
     "svg_adjudicated": "",
-    "current_state": "<to_saved_game_format>"
+    "current_state": "<to_saved_game_format>",
+    "possible_orders": [
+        {
+            "power": "FRANCE",
+            "units": [
+                {
+                    "location": "KIE",
+                    "instructions": [
+                        "A"
+                    ]
+                }
+            ]
+        }
+    ]
 }
 ```
