@@ -4,6 +4,7 @@ Zurzeit erreichbar unter http://wulfheart.pythonanywhere.com.
 
 ## [GET] /variants
 
+**Response:**
 ```json
 ["standard", "ancient_mediterrean"]
 ```
