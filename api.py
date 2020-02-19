@@ -1,12 +1,14 @@
-from flask import Flask, jsonify, abort
+from flask import Flask, jsonify, abort, request
 # from flask import jsonify
 from diplomacy import Game
-from diplomacy.utils.export import to_saved_game_format
+from diplomacy.utils.export import to_saved_game_format, from_saved_game_format
 import json
 
 app = Flask(__name__)
 
 # TODO: Make an issue about the timestamp. It seems to be off time by one hour even though my timezone is configured correctly
+# TODO: Minify JSON Output
+# TODO: Minify SVG Output (at least Whitespace)
 
 # A list of valid variants
 valid = ['standard']
@@ -42,7 +44,27 @@ def basic_instance(variant_name):
         "svg_adjudicated": game.render(incl_orders=False, incl_abbrev=True),
         "current_state": to_saved_game_format(game),
         "possible_orders": return_possible_orders(game)
+    }
 
+@app.route('/adjudicate', methods=['POST'])
+def adjudicator():
+    if not request.is_json:
+        abort(418, 'Please use Application Type JSON')
+    json = request.get_json()
+
+    game = from_saved_game_format(json["previous_state"])
+    game.clear_orders()
+    for order in json["orders"]:
+        game.set_orders(order["power"], order["instructions"])
+    previous_svg = game.render(incl_orders=True, incl_abbrev=True)
+    game.process()
+    adjudicated = game.render(incl_orders=True, incl_abbrev=True)
+    return {
+        "phase": game.map.phase_long(game.get_current_phase()),
+        "svg_with_orders": previous_svg,
+        "svg_adjudicated": adjudicated,
+        "current_state": to_saved_game_format(game),
+        "possible_orders": return_possible_orders(game)
     }
 
 
