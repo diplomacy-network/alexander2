@@ -1,4 +1,6 @@
-# mapAPI v0.1
+# alexander v0.1
+
+Eine mapAPI für DNW2.0.
 
 Zurzeit erreichbar unter http://wulfheart.pythonanywhere.com.
 
