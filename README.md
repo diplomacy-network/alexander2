@@ -1,24 +1,19 @@
-# mapAPI v0.1
+# mapAPI v0.2
 
 ## [GET] /variants
 
 ```json
-["standard", "ancient_mediterrean"]
+[
+    {
+        "name": "standard",
+        "powers": [
+            "FRANCE", "ENGLAND", "GERMANY", "..."
+        ],
+        "end_of_game": 18
+    }
+]
 ```
 
-
-## [GET] /variants/{variant-name}
-
-**Response:** 
-```json
-{
-    "name": "standard",
-    "powers": [
-        "FRANCE", "ENGLAND", "GERMANY"
-    ] 
-}
-
-```
 
 ## [GET] /adjudicate/{variant-name}
 

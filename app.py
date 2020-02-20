@@ -11,25 +11,21 @@ app = Flask(__name__)
 # TODO: Minify SVG Output (at least Whitespace)
 
 # A list of valid variants
-valid = ['standard']
+valid_variants = ['standard']
 
 
 @app.route('/variants')
 def variants():
-    return jsonify(valid)
+    json_array = []
+    for variant in valid_variants:
+        game = Game(map_name=variant)
+        json_array.append({
+            "name": variant,
+            "powers": list(game.get_map_power_names()),
+            "end_of_game": game.win
+            })
 
-
-@app.route('/variants/<variant_name>')
-def variant_display(variant_name):
-    if variant_name not in valid:
-        abort(404)
-    game = Game(map_name=variant_name)
-    list(Game().get_map_power_names())
-    return {
-        "name": variant_name,
-        "powers": list(game.get_map_power_names())
-    }
-
+    return jsonify(json_array)
 
 @app.route('/adjudicate/<variant_name>')
 def basic_instance(variant_name):
@@ -45,6 +41,7 @@ def basic_instance(variant_name):
         "current_state": to_saved_game_format(game),
         "possible_orders": return_possible_orders(game)
     }
+
 
 @app.route('/adjudicate', methods=['POST'])
 def adjudicator():

@@ -1,28 +1,13 @@
 from diplomacy import Game
-from diplomacy.utils.export import to_saved_game_format
+from diplomacy.utils.export import to_saved_game_format, from_saved_game_format
 
 import json
 game = Game(map_name='standard')
 possible_orders = game.get_all_possible_orders()
-
-possibilities = []
-for power in game.get_map_power_names():
-    loc = []
-    dicto = {
-        "name": power
-    }
-    units = []
-    for loc in game.get_orderable_locations(power):
-        cur = {
-            "location": loc,
-            "instructions": possible_orders[loc]
-        }
-        units.append(cur)
-        # print(loc)
-        # print(possible_orders[loc])
-    dicto["units"] = units
-    possibilities.append(dicto)
-print(json.dumps(possibilities, indent=4, sort_keys=True))
+game.win = 12
+saved = to_saved_game_format(game)
+game2 = from_saved_game_format(saved)
+print(game2.win)
 # print(game.map.phase_long(game.get_current_phase()))
 # print(game.map.find_next_phase(game.map.phase_long(game.get_current_phase())))
 # print(game.get_orderable_locations())
