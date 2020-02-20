@@ -2,7 +2,7 @@
 
 Eine mapAPI für DNW2.0.
 
-Zurzeit erreichbar unter http://wulfheart.pythonanywhere.com.
+Zurzeit erreichbar unter http://wulfheart.pythonanywhere.com/v0.2.
 
 ## [GET] /variants
 

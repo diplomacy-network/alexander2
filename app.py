@@ -12,9 +12,10 @@ app = Flask(__name__)
 
 # A list of valid variants
 valid_variants = ['standard']
+version = 'v0.2'
 
 
-@app.route('/variants')
+@app.route('/'+ version + '/variants')
 def variants():
     json_array = []
     for variant in valid_variants:
