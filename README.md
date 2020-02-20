@@ -1,7 +1,12 @@
-# mapAPI v0.2
+# alexander v0.2
+
+Eine mapAPI für DNW2.0.
+
+Zurzeit erreichbar unter http://wulfheart.pythonanywhere.com.
 
 ## [GET] /variants
 
+**Response:**
 ```json
 [
     {
