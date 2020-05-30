@@ -28,9 +28,9 @@ def variants():
 
     return jsonify(json_array)
 
-@app.route('/adjudicate/<variant_name>')
+@app.route('/'+ version + '/adjudicate/<variant_name>')
 def basic_instance(variant_name):
-    if variant_name not in valid:
+    if variant_name not in valid_variants:
         abort(404)
     game = Game(map_name=variant_name)
     # ! This could cause bugs, I'm not sure about the behaviour.
@@ -44,7 +44,7 @@ def basic_instance(variant_name):
     }
 
 
-@app.route('/adjudicate', methods=['POST'])
+@app.route('/'+ version + '/adjudicate', methods=['POST'])
 def adjudicator():
     if not request.is_json:
         abort(418, 'Please use Application Type JSON')
