@@ -3,6 +3,7 @@ from flask import Flask, jsonify, abort, request
 from diplomacy import Game
 from diplomacy.utils.export import to_saved_game_format, from_saved_game_format
 import json
+import base64
 
 app = Flask(__name__)
 
@@ -35,6 +36,7 @@ def basic_instance(variant_name):
     game = Game(map_name=variant_name)
     # ! This could cause bugs, I'm not sure about the behaviour.
     game.rules = []
+    
     return {
         "phase": game.map.phase_long(game.get_current_phase()),
         "svg_with_orders": "",
@@ -49,8 +51,10 @@ def adjudicator():
     if not request.is_json:
         abort(418, 'Please use Application Type JSON')
     jsonb = request.get_json()
-
-    game = from_saved_game_format(json.loads(jsonb["previous_state"]))
+    data = json.loads(jsonb["previous_state"])
+    while not isinstance(data, dict):
+        data = json.loads(data)
+    game = from_saved_game_format(data)
     game.clear_orders()
     try:
         for order in jsonb["orders"]:
@@ -91,3 +95,5 @@ def return_possible_orders(game):
         dicto["units"] = units
         possibilities.append(dicto)
     return possibilities
+
+
