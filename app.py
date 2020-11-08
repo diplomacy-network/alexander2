@@ -39,7 +39,7 @@ def basic_instance(variant_name):
         "phase": game.map.phase_long(game.get_current_phase()),
         "svg_with_orders": "",
         "svg_adjudicated": game.render(incl_orders=False, incl_abbrev=True),
-        "current_state": to_saved_game_format(game),
+        "current_state": json.dumps(to_saved_game_format(game)),
         "possible_orders": return_possible_orders(game)
     }
 
@@ -50,7 +50,7 @@ def adjudicator():
         abort(418, 'Please use Application Type JSON')
     json = request.get_json()
 
-    game = from_saved_game_format(json["previous_state"])
+    game = from_saved_game_format(json.loads(json["previous_state"]))
     game.clear_orders()
     try:
         for order in json["orders"]:
@@ -64,7 +64,7 @@ def adjudicator():
         "phase": game.map.phase_long(game.get_current_phase()),
         "svg_with_orders": previous_svg,
         "svg_adjudicated": adjudicated,
-        "current_state": to_saved_game_format(game),
+        "current_state": json.dumps(to_saved_game_format(game)),
         "possible_orders": return_possible_orders(game)
     }
 
