@@ -52,8 +52,11 @@ def adjudicator():
 
     game = from_saved_game_format(json["previous_state"])
     game.clear_orders()
-    for order in json["orders"]:
-        game.set_orders(order["power"], order["instructions"])
+    try:
+        for order in json["orders"]:
+            game.set_orders(order["power"], order["instructions"])
+    except:
+        pass
     previous_svg = game.render(incl_orders=True, incl_abbrev=True)
     game.process()
     adjudicated = game.render(incl_orders=True, incl_abbrev=True)
