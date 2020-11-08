@@ -48,12 +48,12 @@ def basic_instance(variant_name):
 def adjudicator():
     if not request.is_json:
         abort(418, 'Please use Application Type JSON')
-    json = request.get_json()
+    jsonb = request.get_json()
 
-    game = from_saved_game_format(json.loads(json["previous_state"]))
+    game = from_saved_game_format(json.loads(jsonb["previous_state"]))
     game.clear_orders()
     try:
-        for order in json["orders"]:
+        for order in jsonb["orders"]:
             game.set_orders(order["power"], order["instructions"])
     except:
         pass
