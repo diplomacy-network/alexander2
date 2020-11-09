@@ -48,6 +48,7 @@ def basic_instance(variant_name):
 
 @app.route('/'+ version + '/adjudicate', methods=['POST'])
 def adjudicator():
+    print("Here")
     if not request.is_json:
         abort(418, 'Please use Application Type JSON')
     jsonb = request.get_json()
@@ -56,11 +57,8 @@ def adjudicator():
         data = json.loads(data)
     game = from_saved_game_format(data)
     game.clear_orders()
-    try:
-        for order in jsonb["orders"]:
-            game.set_orders(order["power"], order["instructions"])
-    except:
-        pass
+    for order in jsonb["orders"]:
+        game.set_orders(order["power"], order["instructions"])
     previous_svg = game.render(incl_orders=True, incl_abbrev=True)
     game.process()
     adjudicated = game.render(incl_orders=True, incl_abbrev=True)
