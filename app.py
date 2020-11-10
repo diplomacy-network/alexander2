@@ -66,6 +66,8 @@ def adjudicator():
     game.process()
     adjudicated = game.render(incl_orders=True, incl_abbrev=True)
     return {
+        "phase_type": game.phase_type,
+        "phase_power_data": return_phase_data(game),
         "phase": game.map.phase_long(game.get_current_phase()),
         "svg_with_orders": previous_svg,
         "svg_adjudicated": adjudicated,
