@@ -53,6 +53,16 @@ Refer to ## [POST] /adjudicate
 ```json
 {
     "phase": "S1901M",
+    "phase_type": "M",
+    "phase_power_data": [
+    {
+      "home_centers_count": 3,
+      "name": "AUSTRIA",
+      "supply_centers_count": 3,
+      "unit_count": 3
+    },
+    ...
+    ]
     "svg_with_orders": "",
     "svg_adjudicated": "",
     "current_state": "<to_saved_game_format>",
