@@ -37,12 +37,15 @@ def basic_instance(variant_name):
     # ! This could cause bugs, I'm not sure about the behaviour.
     game.rules = []
     
+    
     return {
+        "phase_type": game.phase_type,
+        "phase_power_data": return_phase_data(game),
         "phase": game.map.phase_long(game.get_current_phase()),
         "svg_with_orders": "",
         "svg_adjudicated": game.render(incl_orders=False, incl_abbrev=True),
         "current_state": json.dumps(to_saved_game_format(game)),
-        "possible_orders": return_possible_orders(game)
+        "possible_orders": return_possible_orders(game),
     }
 
 
@@ -91,6 +94,21 @@ def return_possible_orders(game):
             # print(loc)
             # print(possible_orders[loc])
         dicto["units"] = units
+        possibilities.append(dicto)
+    return possibilities
+
+def return_phase_data(game):
+    # TODO: Better variable names, for now it does its job
+
+    possibilities = []
+    for power in game.powers:
+        p = game.powers[power]
+        dicto = {
+            "name": p.name,
+            "unit_count": len(p.units),
+            "supply_centers_count": len(p.centers),
+            "home_centers_count": len(p.homes)
+        }
         possibilities.append(dicto)
     return possibilities
 
