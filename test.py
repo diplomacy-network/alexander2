@@ -1,22 +1,35 @@
 from diplomacy import Game
+from diplomacy.engine.game import Power
 from diplomacy.utils.export import to_saved_game_format, from_saved_game_format
-
+import pathlib
 import json
-game = Game(map_name='standard')
-possible_orders = game.get_all_possible_orders()
-game.win = 12
-saved = to_saved_game_format(game)
-game2 = from_saved_game_format(saved)
-print(game2.win)
-# print(game.map.phase_long(game.get_current_phase()))
-# print(game.map.find_next_phase(game.map.phase_long(game.get_current_phase())))
-# print(game.get_orderable_locations())
-# with open('game_with_arrow.svg', 'w') as out_file:
-#     out_file.write(game.render(incl_orders=True, incl_abbrev=True))
 
-next_possible_orders = game.get_all_possible_orders()
-# print(next_possible_orders)
-# for loc in next_possible_orders:
-#   if next_possible_orders[loc]:
-#     print('Possible orders at', loc, next_possible_orders[loc])
-# print(json.dumps(to_saved_game_format(game), indent=4, sort_keys=True))
+def printer(game):
+    print(game.phase)
+    print(game.ordered_units)
+    print(game.dislodged)
+    print(game.result)
+    game.render(incl_orders=True,incl_abbrev=True, output_path="D:\\code\\python\\alexander2\\imgs\\1.svg")
+    
+    print("==================")
+
+def get_all_orders(game: Game, power: Power):
+        given_orders = power.orders
+        units = game.map.units[power.name]
+        
+        orders = []
+        for unit in units:
+            if unit in given_orders:
+                orders.append("%s %s" % (unit, given_orders[unit]))
+            elif(game.phase_type == 'M'):
+                orders.append("%s H" % unit)        
+        return orders
+
+
+game = Game(map_name="standard")
+power = game.get_power("FRANCE")
+game.set_orders("FRANCE", ["A PAR - GAS"])
+game.process()
+print(game.ordered_units)
+print(get_all_orders(game, power))
+
