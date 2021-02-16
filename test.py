@@ -1,8 +1,10 @@
 from diplomacy import Game
 from diplomacy.engine.game import Power
 from diplomacy.utils.export import to_saved_game_format, from_saved_game_format
+from service import GameFormatter
 import pathlib
 import json
+import html
 
 def printer(game):
     print(game.phase)
@@ -13,23 +15,28 @@ def printer(game):
     
     print("==================")
 
-def get_all_orders(game: Game, power: Power):
-        given_orders = power.orders
-        units = game.map.units[power.name]
+# def get_all_orders(game: Game, power: str):
+#         given_orders = game.get_power(power).orders
+#         units = game.map.units[power.name]
         
-        orders = []
-        for unit in units:
-            if unit in given_orders:
-                orders.append("%s %s" % (unit, given_orders[unit]))
-            elif(game.phase_type == 'M'):
-                orders.append("%s H" % unit)        
-        return orders
+#         orders = []
+#         for unit in units:
+#             if unit in given_orders:
+#                 orders.append("%s %s" % (unit, given_orders[unit]))
+#             elif(game.phase_type == 'M'):
+#                 orders.append("%s H" % unit)        
+#         return orders
 
 
 game = Game(map_name="standard")
 power = game.get_power("FRANCE")
 game.set_orders("FRANCE", ["A PAR - GAS"])
+print(game.map.locs)
 game.process()
-print(game.ordered_units)
-print(get_all_orders(game, power))
+# print(GameFormatter.previously_applied_orders(game, power))
+# with open(r'D:\code\python\alexander2\data2.json', "w") as file:
+#     file.write(html.escape(json.dumps(to_saved_game_format(game))))
+
+# print(html.escape(json.dumps(to_saved_game_format(game))))
+# print(get_all_orders(game, power))
 
