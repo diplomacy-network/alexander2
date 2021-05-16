@@ -24,28 +24,32 @@ abstract class TestCase extends BaseTestCase
 
     }
 
-    protected function executeTestRun(string $variant, string $runFile, string $phrase): array {
+    protected function executeTestRun(string $variant, string $runFile, string $phrase): array
+    {
         $path = Storage::path("instructions/$runFile");
         $orders = Yaml::parseFile($path);
 
         $currentTime = now()->toDateTimeLocalString();
-        $this->basePath = 'img/' . $phrase . '/' . $currentTime;
+        $this->basePath = 'img/'.$phrase.'/'.$currentTime;
 
         $i = 0;
         // Initialize
-        $response = $this->client->get('/adjudicate/' .  $variant);
+        $response = $this->client->get('/adjudicate/'.$variant);
         $data = $response->json();
         $this->saveImgFiles($i, $data, false);
 
         $encodedState = $data['current_state_encoded'];
-        foreach ($orders as $orderBatch){
+        foreach ($orders as $orderBatch) {
             $i++;
             $instr = [];
-            foreach ($orderBatch as $power => $instructions){
-                $instr[] = [
-                    'power' => $power,
-                    'instructions' => $instructions,
-                ];
+            if ($orderBatch != "NONE") {
+
+                foreach ($orderBatch as $power => $instructions) {
+                    $instr[] = [
+                        'power' => $power,
+                        'instructions' => $instructions,
+                    ];
+                }
             }
             $response = $this->client->post('adjudicate', [
                 'previous_state_encoded' => $encodedState,
@@ -59,7 +63,8 @@ abstract class TestCase extends BaseTestCase
         return $data;
     }
 
-    protected function saveImgFiles(int $index, array $data, bool $with_orders){
+    protected function saveImgFiles(int $index, array $data, bool $with_orders)
+    {
 
 
         $baseAdjudicatedPath = "{$this->basePath}/{$index}_{$data['phase']}_1_adjudicated";
@@ -67,14 +72,13 @@ abstract class TestCase extends BaseTestCase
         Storage::put("$baseAdjudicatedPath.svg", $svgAdjudicated);
 
 
-        if($with_orders){
+        if ($with_orders) {
             $baseWithOrdersPath = "{$this->basePath}/{$index}_{$data['phase']}_0_with_orders";
             $svgWithOrders = $data['svg_with_orders'];
             Storage::put("$baseWithOrdersPath.svg", $svgWithOrders);
         }
 
     }
-
 
 
 }
