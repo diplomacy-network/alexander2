@@ -53,7 +53,6 @@ Refer to ## [POST] /adjudicate
 
 ```json
 {
-    {
   "applied_orders": {
     "AUSTRIA": [],
     "ENGLAND": [],
@@ -65,7 +64,7 @@ Refer to ## [POST] /adjudicate
     "RUSSIA": [],
     "TURKEY": []
   },
-  "current_state_encoded": "<current_state_encoded_as_base64>"
+  "current_state_encoded": "<current_state_encoded_as_base64>",
   "phase_long": "FALL 1901 MOVEMENT",
   "phase_power_data": {
     "AUSTRIA": {
