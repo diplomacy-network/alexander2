@@ -1,8 +1,8 @@
-# alexander v0.2
+# alexander v0.3
 
 Eine mapAPI für DNW2.0.
 
-Zurzeit erreichbar unter http://wulfheart.pythonanywhere.com/v0.2.
+Zurzeit erreichbar unter http://alexander2.herokuapp.com/v0.3.
 
 ## [GET] /variants
 
