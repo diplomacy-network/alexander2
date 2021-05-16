@@ -11,7 +11,7 @@ class BasicTestRunGenerationTest extends TestCase
 
     /** @test */
     public function basic_test_run_generation(){
-        $this->executeTestRun('standard', 'base.yaml', 'base');
+        $this->executeTestRun('standard', 'base.yaml', 'base', 18);
 
     }
 }

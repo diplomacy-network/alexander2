@@ -84,6 +84,7 @@ Refer to ## [POST] /adjudicate
   },
   "svg_adjudicated": "<some_svg_file>",
   "svg_with_orders": "<some_svg_file_of_the_previous_phase_with_orders>",
-  "winners": []
+  "winners": [],
+  "winning_phase": "W1901A",
 }
 ```

@@ -16,7 +16,7 @@
     </coverage>
     <php>
         <server name="APP_ENV" value="testing"/>
-        <server name="API_BASE_URL" value="http://127.0.0.1:5000/v0.2/"/>
+        <server name="API_BASE_URL" value="http://127.0.0.1:5000/v0.3/"/>
 
     </php>
 </phpunit>

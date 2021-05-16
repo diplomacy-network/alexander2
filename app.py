@@ -104,6 +104,7 @@ def return_api_result(game: Game, previous_svg="", previous_phase=""):
         "current_state_encoded": base64.b64encode(json.dumps(savedGame).encode()).decode(),
         "possible_orders": return_possible_orders(game),
         "applied_orders": game.order_history[previous_phase] if previous_phase != "" else {},
-        "winners": game.outcome[1:]
+        "winners": game.outcome[1:],
+        "winning_phase": game.outcome[0] if len(game.outcome) > 1 else "",
     }
 

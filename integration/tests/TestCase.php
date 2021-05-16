@@ -24,7 +24,7 @@ abstract class TestCase extends BaseTestCase
 
     }
 
-    protected function executeTestRun(string $variant, string $runFile, string $phrase): array
+    protected function executeTestRun(string $variant, string $runFile, string $phrase, int $scs_to_win): array
     {
         $path = Storage::path("instructions/$runFile");
         $orders = Yaml::parseFile($path);
@@ -36,44 +36,51 @@ abstract class TestCase extends BaseTestCase
         // Initialize
         $response = $this->client->get('/adjudicate/'.$variant);
         $data = $response->json();
-        $this->saveImgFiles($i, $data, false);
+        $previousPhaseName = $data['phase_short'];
+        $currentPhaseName = $data['phase_short'];
+
+        $this->saveImgFiles($i, $data, false, $currentPhaseName, $previousPhaseName);
 
         $encodedState = $data['current_state_encoded'];
         foreach ($orders as $orderBatch) {
             $i++;
-            $instr = [];
-            if ($orderBatch != "NONE") {
+            $instr = $orderBatch == "NONE" ? (object)[] : $orderBatch;
 
-                foreach ($orderBatch as $power => $instructions) {
-                    $instr[] = [
-                        'power' => $power,
-                        'instructions' => $instructions,
-                    ];
-                }
-            }
             $response = $this->client->post('adjudicate', [
                 'previous_state_encoded' => $encodedState,
                 'orders' => $instr,
+                'scs_to_win' => $scs_to_win,
             ]);
             $data = $response->json();
-            $this->saveImgFiles($i, $data, true);
+
+
+            $currentPhaseName = $response->json('phase_short');
+            $this->saveImgFiles($i, $data, true, $currentPhaseName, $previousPhaseName);
+
+            if(str_contains($currentPhaseName, "COMPLETED")){
+                break;
+            }
+
+
+            $previousPhaseName = $currentPhaseName;
             $encodedState = $data['current_state_encoded'];
         }
 
         return $data;
     }
 
-    protected function saveImgFiles(int $index, array $data, bool $with_orders)
+    protected function saveImgFiles(int $index, array $data, bool $with_orders, string $currentPhase, string $previousPhase)
     {
 
 
-        $baseAdjudicatedPath = "{$this->basePath}/{$index}_{$data['phase']}_1_adjudicated";
+        $baseAdjudicatedPath = "{$this->basePath}/{$index}_{$currentPhase}_0_adjudicated";
         $svgAdjudicated = $data['svg_adjudicated'];
         Storage::put("$baseAdjudicatedPath.svg", $svgAdjudicated);
 
 
         if ($with_orders) {
-            $baseWithOrdersPath = "{$this->basePath}/{$index}_{$data['phase']}_0_with_orders";
+            $previousIndex = $index-1;
+            $baseWithOrdersPath = "{$this->basePath}/{$previousIndex}_{$previousPhase}_1_with_orders";
             $svgWithOrders = $data['svg_with_orders'];
             Storage::put("$baseWithOrdersPath.svg", $svgWithOrders);
         }

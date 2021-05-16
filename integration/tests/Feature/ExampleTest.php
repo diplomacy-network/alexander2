@@ -18,8 +18,8 @@ class ExampleTest extends TestCase
      */
     public function test_example()
     {
-        $response = $this->client->get('variants');
-        $this->assertJsonValueEquals($response->body(), '$.*.name', 'standard');
+//        $response = $this->client->get('variants');
+//        $this->assertJsonValueEquals($response->body(), '$.*.name', 'standard');
 
     }
 }
