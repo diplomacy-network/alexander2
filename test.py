@@ -58,30 +58,27 @@ game.set_orders("FRANCE", ["A PAR-GAS", "A mar-bur"])
 power = game.get_power("ENGLAND")
 power.clear_units()
 power.clear_centers()
+game.win = 5
 
 # print(return_possible_orders(game))
 game.process()
 
 # Herbst
-game.set_orders("FRANCE", ["A GAS-SPA"])
+# game.set_orders("FRANCE", ["A GAS-SPA", "A BUR-BEL"])
 game.process()
 
 #  Adjustment
 possible = return_possible_orders(game)
 game.set_orders("FRANCE", ["A PAR B"])
 game.process()
-game.win = 5;
+winners = game.outcome[1:]
 p = game.get_state()
 da = to_saved_game_format(game)
+
 print(game.command)
 printer(game)
 
-import base64
-savedGame = to_saved_game_format(game)
-encoded = base64.b64encode(json.dumps(savedGame).encode()).decode()
-val = base64.b64decode(encoded.encode())
-sp = from_saved_game_format(json.loads(val))
-print("DONE")
+
 # print(GameFormatter.previously_applied_orders(game, power))
 # with open(r'D:\code\python\alexander2\data2.json', "w") as file:
 #     file.write(html.escape(json.dumps(to_saved_game_format(game))))

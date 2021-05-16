@@ -1,3 +1,4 @@
+from diplomacy.utils.strings import PREVIOUS_PHASE
 from flask import Flask, jsonify, abort, request
 # from flask import jsonify
 from diplomacy import Game
@@ -13,19 +14,18 @@ app = Flask(__name__)
 
 # A list of valid variants
 valid_variants = ['standard']
-version = 'v0.2'
+version = 'v0.3'
 
 
 @app.route('/'+ version + '/variants')
 def variants():
-    json_array = []
+    json_array = dict()
     for variant in valid_variants:
         game = Game(map_name=variant)
-        json_array.append({
-            "name": variant,
+        json_array[variant] = {
             "powers": list(game.get_map_power_names()),
-            "end_of_game": game.win
-            })
+            "default_end_of_game": game.win
+            }
 
     return jsonify(json_array)
 
@@ -36,17 +36,7 @@ def basic_instance(variant_name):
     game = Game(map_name=variant_name)
     # ! This could cause bugs, I'm not sure about the behaviour.
     game.rules = []
-    savedGame = to_saved_game_format(game)
-    return {
-        "phase_type": game.phase_type,
-        "phase_power_data": return_phase_data(game),
-        "phase": game.map.phase_long(game.get_current_phase()),
-        "svg_with_orders": "",
-        "svg_adjudicated": game.render(incl_orders=False, incl_abbrev=True),
-        "current_state_encoded": base64.b64encode(json.dumps(savedGame).encode()).decode(),
-        "current_state": savedGame,
-        "possible_orders": return_possible_orders(game),
-    }
+    return return_api_result(game)
 
 
 @app.route('/'+ version + '/adjudicate', methods=['POST'])
@@ -58,60 +48,61 @@ def adjudicator():
     game = from_saved_game_format(data)
     game.clear_orders()
     game.rules = []
-    for order in jsonb["orders"]:
-        game.set_orders(order["power"], order["instructions"])
+    print(jsonb["orders"])
+    for power, instructions in jsonb["orders"].items():
+        game.set_orders(power, instructions)
+    previous_phase = game.get_current_phase()
     previous_svg = game.render(incl_orders=True, incl_abbrev=True)
     game.process()
-    adjudicated = game.render(incl_orders=True, incl_abbrev=True)
-    savedGame = to_saved_game_format(game)
-    return {
-        "phase_type": game.phase_type,
-        "phase_power_data": return_phase_data(game),
-        "phase": game.map.phase_long(game.get_current_phase()),
-        "svg_with_orders": previous_svg,
-        "svg_adjudicated": adjudicated,
-        "current_state_encoded": base64.b64encode(json.dumps(savedGame).encode()).decode(),
-        "current_state": savedGame,
-        "possible_orders": return_possible_orders(game)
-    }
+    
+    return return_api_result(game, previous_svg=previous_svg, previous_phase=previous_phase)
 
 
 def return_possible_orders(game):
     # TODO: Better variable names, for now it does its job
     possible_orders = game.get_all_possible_orders()
 
-    possibilities = []
+    possibilities = dict()
     for power in game.get_map_power_names():
         loc = []
         dicto = {
             "name": power
         }
-        units = []
+        units = dict()
         for loc in game.get_orderable_locations(power):
-            cur = {
-                "location": loc,
-                "instructions": possible_orders[loc]
-            }
-            units.append(cur)
-            # print(loc)
-            # print(possible_orders[loc])
-        dicto["units"] = units
-        possibilities.append(dicto)
+            units[loc] = possible_orders[loc]
+        # dicto["units"] = units
+        possibilities[power] = units
     return possibilities
 
 def return_phase_data(game):
     # TODO: Better variable names, for now it does its job
 
-    possibilities = []
+    possibilities = dict()
     for power in game.powers:
         p = game.powers[power]
-        dicto = {
-            "name": p.name,
+        possibilities[p.name] = {
             "unit_count": len(p.units),
-            "supply_centers_count": len(p.centers),
-            "home_centers_count": len(p.homes)
+            "supply_center_count": len(p.centers),
+            "home_center_count": len(p.homes)
         }
-        possibilities.append(dicto)
+    
     return possibilities
 
+def return_api_result(game: Game, previous_svg="", previous_phase=""):
+    adjudicated = game.render(incl_orders=True, incl_abbrev=True)
+    savedGame = to_saved_game_format(game)
+    
+    return {
+        "phase_type": game.phase_type,
+        "phase_power_data": return_phase_data(game),
+        "phase_long": game.map.phase_long(game.get_current_phase()),
+        "phase_short": game.get_current_phase(),
+        "svg_with_orders": previous_svg,
+        "svg_adjudicated": adjudicated,
+        "current_state_encoded": base64.b64encode(json.dumps(savedGame).encode()).decode(),
+        "possible_orders": return_possible_orders(game),
+        "applied_orders": game.order_history[previous_phase] if previous_phase != "" else {},
+        "winners": game.outcome[1:]
+    }
 
