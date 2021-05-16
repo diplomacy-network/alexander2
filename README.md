@@ -44,7 +44,7 @@ Refer to ## [POST] /adjudicate
             ]
         }
     ],
-    "previous_state": "<to_saved_game_format>"
+    "previous_state_encoded": "<to_saved_game_format>"
 }
 ```
 
