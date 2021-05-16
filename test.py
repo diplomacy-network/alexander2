@@ -55,22 +55,25 @@ def return_possible_orders(game):
 game = Game(map_name="standard")
 game.set_orders("FRANCE", ["A PAR-GAS", "A mar-bur"])
 # get_all_orders(game, "FRANCE")
-power = game.get_power("ENGLAND")
+power = game.get_power("RUSSIA")
 power.clear_units()
 power.clear_centers()
-game.win = 5
+game.win = 4
 
 # print(return_possible_orders(game))
 game.process()
 
 # Herbst
-# game.set_orders("FRANCE", ["A GAS-SPA", "A BUR-BEL"])
+game.set_orders("FRANCE", ["A GAS-SPA", 
+# "A BUR-BEL"
+])
 game.process()
 
 #  Adjustment
 possible = return_possible_orders(game)
 game.set_orders("FRANCE", ["A PAR B"])
 game.process()
+# game._determine_win()
 winners = game.outcome[1:]
 p = game.get_state()
 da = to_saved_game_format(game)

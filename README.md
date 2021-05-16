@@ -8,15 +8,20 @@ Zurzeit erreichbar unter http://wulfheart.pythonanywhere.com/v0.2.
 
 **Response:**
 ```json
-[
-    {
-        "name": "standard",
-        "powers": [
-            "FRANCE", "ENGLAND", "GERMANY", "..."
-        ],
-        "end_of_game": 18
-    }
-]
+{
+  "standard": {
+    "default_end_of_game": 18,
+    "powers": [
+      "AUSTRIA",
+      "ENGLAND",
+      "FRANCE",
+      "GERMANY",
+      "ITALY",
+      "RUSSIA",
+      "TURKEY"
+    ]
+  }
+}
 ```
 
 
@@ -36,15 +41,11 @@ Refer to ## [POST] /adjudicate
 
 ```json
 {
-    "orders": [
-        {
-            "power": "FRANCE",
-            "instructions": [
-                "A LON H"
-            ]
-        }
-    ],
-    "previous_state_encoded": "<to_saved_game_format>"
+    "orders": {
+		"FRANCE": ["A PAR-BUR"]
+	},
+    "previous_state_encoded": "<to_saved_game_format_encoded_as_base64>",
+    "scs_to_win": 18,
 }
 ```
 
@@ -52,31 +53,38 @@ Refer to ## [POST] /adjudicate
 
 ```json
 {
-    "phase": "Summer 1901 Movements",
-    "phase_type": "M",
-    "phase_power_data": [
     {
-      "home_centers_count": 3,
-      "name": "AUSTRIA",
-      "supply_centers_count": 3,
+  "applied_orders": {
+    "AUSTRIA": [],
+    "ENGLAND": [],
+    "FRANCE": [
+      "A PAR - BUR"
+    ],
+    "GERMANY": [],
+    "ITALY": [],
+    "RUSSIA": [],
+    "TURKEY": []
+  },
+  "current_state_encoded": "<current_state_encoded_as_base64>"
+  "phase_long": "FALL 1901 MOVEMENT",
+  "phase_power_data": {
+    "AUSTRIA": {
+      "home_center_count": 3,
+      "supply_center_count": 3,
       "unit_count": 3
     }
-    ],
-    "svg_with_orders": "",
-    "svg_adjudicated": "",
-    "current_state": "<to_saved_game_format>",
-    "possible_orders": [
-        {
-            "power": "FRANCE",
-            "units": [
-                {
-                    "location": "KIE",
-                    "instructions": [
-                        "A"
-                    ]
-                }
-            ]
-        }
-    ]
+  },
+  "phase_short": "F1901M",
+  "phase_type": "M",
+  "possible_orders": {
+    "AUSTRIA": {
+      "BUD": [
+        "A BUD S A VIE - TRI"
+      ]
+    }
+  },
+  "svg_adjudicated": "<some_svg_file>",
+  "svg_with_orders": "<some_svg_file_of_the_previous_phase_with_orders>",
+  "winners": []
 }
 ```

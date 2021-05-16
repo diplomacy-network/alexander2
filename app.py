@@ -46,6 +46,7 @@ def adjudicator():
     jsonb = request.get_json()
     data = json.loads(base64.b64decode(jsonb["previous_state_encoded"]).decode())
     game = from_saved_game_format(data)
+    game.win = jsonb['scs_to_win']
     game.clear_orders()
     game.rules = []
     print(jsonb["orders"])
