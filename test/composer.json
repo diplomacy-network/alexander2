@@ -1,0 +1,17 @@
+{
+    "name": "alexander2/test",
+    "require": {
+        "php": "^8.0",
+        "phpunit/phpunit": "^9.5",
+        "guzzlehttp/guzzle": "^7.3"
+    },
+    "require-dev": {
+        "helmich/phpunit-json-assert": "^3.4"
+    },
+    "description": "",
+    "autoload": {
+        "classmap": [
+            "TestCase.php"
+        ]
+    }
+}

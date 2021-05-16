@@ -36,42 +36,42 @@ def basic_instance(variant_name):
     game = Game(map_name=variant_name)
     # ! This could cause bugs, I'm not sure about the behaviour.
     game.rules = []
-    
-    
+    savedGame = to_saved_game_format(game)
     return {
         "phase_type": game.phase_type,
         "phase_power_data": return_phase_data(game),
         "phase": game.map.phase_long(game.get_current_phase()),
         "svg_with_orders": "",
         "svg_adjudicated": game.render(incl_orders=False, incl_abbrev=True),
-        "current_state": json.dumps(to_saved_game_format(game)),
+        "current_state_encoded": base64.b64encode(json.dumps(savedGame).encode()).decode(),
+        "current_state": savedGame,
         "possible_orders": return_possible_orders(game),
     }
 
 
 @app.route('/'+ version + '/adjudicate', methods=['POST'])
 def adjudicator():
-    print("Here")
     if not request.is_json:
         abort(418, 'Please use Application Type JSON')
     jsonb = request.get_json()
-    data = json.loads(jsonb["previous_state"])
-    while not isinstance(data, dict):
-        data = json.loads(data)
+    data = json.loads(base64.b64decode(jsonb["previous_state_encoded"]).decode())
     game = from_saved_game_format(data)
     game.clear_orders()
+    game.rules = []
     for order in jsonb["orders"]:
         game.set_orders(order["power"], order["instructions"])
     previous_svg = game.render(incl_orders=True, incl_abbrev=True)
     game.process()
     adjudicated = game.render(incl_orders=True, incl_abbrev=True)
+    savedGame = to_saved_game_format(game)
     return {
         "phase_type": game.phase_type,
         "phase_power_data": return_phase_data(game),
         "phase": game.map.phase_long(game.get_current_phase()),
         "svg_with_orders": previous_svg,
         "svg_adjudicated": adjudicated,
-        "current_state": json.dumps(to_saved_game_format(game)),
+        "current_state_encoded": base64.b64encode(json.dumps(savedGame).encode()).decode(),
+        "current_state": savedGame,
         "possible_orders": return_possible_orders(game)
     }
 

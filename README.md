@@ -52,7 +52,7 @@ Refer to ## [POST] /adjudicate
 
 ```json
 {
-    "phase": "S1901M",
+    "phase": "Summer 1901 Movements",
     "phase_type": "M",
     "phase_power_data": [
     {
@@ -60,9 +60,8 @@ Refer to ## [POST] /adjudicate
       "name": "AUSTRIA",
       "supply_centers_count": 3,
       "unit_count": 3
-    },
-    ...
-    ]
+    }
+    ],
     "svg_with_orders": "",
     "svg_adjudicated": "",
     "current_state": "<to_saved_game_format>",
