@@ -1,10 +1,12 @@
 from diplomacy.utils.strings import PREVIOUS_PHASE
-from flask import Flask, jsonify, abort, request
+from flask import Flask, jsonify, abort, request, redirect
 # from flask import jsonify
 from diplomacy import Game
 from diplomacy.utils.export import to_saved_game_format, from_saved_game_format
 import json
 import base64
+import markdown
+import markdown.extensions.fenced_code
 
 app = Flask(__name__)
 
@@ -16,6 +18,19 @@ app = Flask(__name__)
 valid_variants = ['standard']
 version = 'v0.3'
 
+
+@app.route('/')
+def root():
+    return redirect('/' + version)
+
+@app.route('/' + version)
+def docs():
+    readme_file = open("README.md", "r")
+    md_template_string = markdown.markdown(
+        readme_file.read(), extensions=["fenced_code"]
+    )
+
+    return md_template_string
 
 @app.route('/'+ version + '/variants')
 def variants():
