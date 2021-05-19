@@ -73,6 +73,7 @@ game.process()
 possible = return_possible_orders(game)
 game.set_orders("FRANCE", ["A PAR B"])
 game.process()
+map = game.map
 # game._determine_win()
 winners = game.outcome[1:]
 p = game.get_state()
