@@ -1,3 +1,6 @@
+from genericpath import exists
+from math import e, radians
+import random
 from typing import Dict
 from diplomacy import Game
 from diplomacy.engine.game import Power
@@ -7,6 +10,8 @@ from diplomacy.utils.export import to_saved_game_format, from_saved_game_format
 A = 1
 B = 4
 C = 16
+
+THRESHOLD_PLAY_ALTERNATIVE = 50
 
 Sw = {"SPRING": 1000, "FALL": 1000, "WINTER": 0}
 Cw = {"SPRING": 1000, "FALL": 1000, "WINTER": 0}
@@ -60,6 +65,9 @@ def get_best_orders(game: Game, power: Power):
             for unit in unit_positions.values():
                 if game.map.abuts(unit.get("type"), unit.get("loc"), "-", loc) and unit.get("power") != power.name:
                     attackable_powers.append(
+                        # if region r contains a supply center and is occupied by us
+                        # equal to the power size of the strongest power that might attack it 
+                        # TODO: Implementation correct? Could be ambiguous
                         power_sizes.get(unit.get("power")) or 0)
             defense_values[loc] = max(attackable_powers)
 
@@ -87,8 +95,80 @@ def get_best_orders(game: Game, power: Power):
             locs[l] = sum(adj_values) / len(adj_values)
         proximity_map[i] = locs
             
+    # Competition and Strength Values
+    strength_values = {}
+    competition_values = {}
+    for loc in game.map.locs:
+        loc = loc.upper()
+        adjacencies = game.map.abut_list(loc)
+        adjacent_units = list(filter(lambda x: x is not None, [unit_positions.get(key) for key in game.map.abut_list(loc)]))
+        # own_units = list(filter(lambda x: x.get("power") == power.name, adjacent_units))
+        # strength_values[loc] = len(own_units)
 
+        unit_neighbour_count = {}
+        for p in game.powers.values():
+            unit_neighbour_count[p.name.upper()] = 0
+        for a in adjacent_units:
+            unit_neighbour_count[a["power"]] += 1
+
+        strength_values[loc] = unit_neighbour_count[power.name]
+        # Remove the current power
+        unit_neighbour_count.pop(p.name.upper(), None)
+        competition_values[loc] = max(unit_neighbour_count.values())
+
+    # Calculating Destination Values
+    sw = calculate_parameter(game.phase, Sw)
+    cw = calculate_parameter(game.phase, Cw)
+    destination_values = {}
+    for loc in game.map.locs:
+        loc = loc.upper()
+        value = 0
+        for i in range(0,10):
+            value += Pw[i] * proximity_map[i][loc]
+        value += strength_values[loc] * sw - competition_values[loc] * cw
+        destination_values[loc] = value
+
+    # Remove all impassable Destinations aka. SHUT
+    for location, loc_type in game.map.loc_type.items():
+        if loc_type == "SHUT":
+            destination_values.pop(location.upper(), None)
     
+
+    ## -------
+
+    if game.phase_type == "M":
+    # Determining Moves
+        units_to_order = list(filter(lambda x: x.get("power") == power.name ,unit_positions.values()))
+        destinations = {}
+        for unit in units_to_order:
+            # All possible Destination Values
+            loc = unit["loc"].upper()
+            adjacencies = [a.upper() for a in game.map.abut_list(loc) if game.map.abuts(unit["type"], loc, '-', a.upper())]
+            adjacencies.append(loc)
+            data = {region: destination_values[region] for region in adjacencies}
+            ranked_provinces = dict(sorted(data.items(), key=lambda x: x[1], reverse=True))
+            destination_selected = False
+            i = 0
+            while not destination_selected:
+                i = 0 if i >= (len(ranked_provinces) - 1) else i
+                dva = ranked_provinces[list(ranked_provinces.keys())[i]]
+                dvb = ranked_provinces[list(ranked_provinces.keys())[i + 1]]
+                next_province_chance = ((dva -dvb) / dva) * 500
+                random_number = random.randint(0,100)
+                if random_number > THRESHOLD_PLAY_ALTERNATIVE or random_number < next_province_chance:
+                    destination_selected = True
+                    destinations[loc] = list(ranked_provinces.keys())[i]
+                i += 1
+                
+    # Returning orders
+        return ["A PAR - MAR"]
+
+
+    else:
+        print("ELSE")
+
+
+
 
 
     print(game.map_name, power.name)
@@ -103,5 +183,6 @@ def calculate_parameter(phase_long: str, parameter: dict):
 
 game = Game(map_name="standard")
 power = game.get_power("FRANCE")
+
 
 get_best_orders(game, power)

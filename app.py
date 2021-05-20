@@ -7,6 +7,7 @@ import json
 import base64
 import markdown
 import markdown.extensions.fenced_code
+from orders import get_best_orders
 
 app = Flask(__name__)
 
@@ -73,6 +74,16 @@ def adjudicator():
     
     return return_api_result(game, previous_svg=previous_svg, previous_phase=previous_phase)
 
+@app.route('/'+ version + '/dumbbot', methods=['POST'])
+def dumbbot():
+    if not request.is_json:
+        abort(418, 'Please use Application Type JSON')
+    jsonb = request.get_json()
+    data = json.loads(base64.b64decode(jsonb["current_state_encoded"]).decode())
+    powername = jsonb["power"]
+    game = from_saved_game_format(data)
+    power = game.get_power(powername)
+    return jsonify(get_best_orders(game, power) or [])
 
 def return_possible_orders(game):
     # TODO: Better variable names, for now it does its job
