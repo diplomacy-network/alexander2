@@ -12,7 +12,7 @@ class DumbbotCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'dnw:dumbsingle {--max=50} {--dumb=} {--random=}';
+    protected $signature = 'dnw:bot {--max=50} {--dumb=} {--random=}';
 
     /**
      * The console command description.
@@ -31,19 +31,24 @@ class DumbbotCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
+
     public function handle()
     {
-        $game = new GameService('dumbsingle');
+        $game = new GameService('bot', 'standard');
         $game->initGame();
         $game->saveImgFiles();
         $i = 0;
-        $dumb = array_filter(explode(',', $this->option('dumb')));
-        $rand = array_filter(explode(',', $this->option('random')));
+        $rand = $dumb = [];
+        if($this->option('dumb') == 'all' || $this->option('random') == 'all'){
+            if($this->option('dumb')){
+                $dumb = $game->getAllPowers();
+            } else {
+                $rand = $game->getAllPowers();
+            }
+        } else {
+            $dumb = array_filter(explode(',', $this->option('dumb')));
+            $rand = array_filter(explode(',', $this->option('random')));
+        }
         $max = $this->option('max');
         $bar = $this->output->createProgressBar($max);
         $bar->start();
@@ -57,6 +62,7 @@ class DumbbotCommand extends Command
             }
             $game->adjudicate();
             $game->saveImgFiles();
+            $game->saveState();
             $i++;
             $bar->advance();
         }

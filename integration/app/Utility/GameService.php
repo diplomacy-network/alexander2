@@ -15,12 +15,14 @@ class GameService
     public array $currentData = [];
     public array $previousData = [];
     public array $orders = [];
+    public string $variant;
 
-    public function __construct(string $base)
+    public function __construct(string $base, string $variant)
     {
         $this->client = Http::baseUrl(env('API_BASE_URL'));
         $currentTime = str_replace(':', '-', now()->toDateTimeLocalString());
         $this->basePath = $base . '/' . $currentTime;
+        $this->variant = $variant;
     }
 
     public function saveImgFiles()
@@ -31,12 +33,6 @@ class GameService
         Storage::put("$baseAdjudicatedPath.svg", $svgAdjudicated);
 
 
-
-        // Save game_encoded
-        $baseAdjudicatedPath = "{$this->basePath}/state/{$this->currentIndex}_{$this->currentData['phase_short']}";
-        $data = $this->currentData['current_state_encoded'];
-        Storage::put("$baseAdjudicatedPath.txt", $data);
-
         if (!empty($this->previousData)) {
             $previousIndex = $this->currentIndex - 1;
             $baseWithOrdersPath = "{$this->basePath}/{$previousIndex}_{$this->previousData['phase_short']}_1_with_orders";
@@ -45,10 +41,29 @@ class GameService
         }
     }
 
+    public function saveState(){
+        // Save game_encoded
+        $baseAdjudicatedPath = "{$this->basePath}/state_encoded/{$this->currentIndex}_{$this->currentData['phase_short']}";
+        $data = $this->currentData['current_state_encoded'];
+        Storage::put("$baseAdjudicatedPath.txt", $data);
+
+        // Save game_encoded
+        $baseAdjudicatedPath = "{$this->basePath}/phase_power_data/{$this->currentIndex}_{$this->currentData['phase_short']}";
+        $data = json_encode($this->currentData['phase_power_data'], JSON_PRETTY_PRINT);
+        Storage::put("$baseAdjudicatedPath.json", $data);
+    }
+
+
+
     public function initGame()
     {
-        $response = $this->client->get('/adjudicate/standard');
+        $response = $this->client->get('/adjudicate/' . $this->variant);
         $this->currentData = $response->json();
+    }
+
+    public function getAllPowers(): array{
+        $response = $this->client->get('/variants');
+        return $response->json()[$this->variant]['powers'];
     }
 
     public function adjudicate()
