@@ -31,6 +31,12 @@ class GameService
         Storage::put("$baseAdjudicatedPath.svg", $svgAdjudicated);
 
 
+
+        // Save game_encoded
+        $baseAdjudicatedPath = "{$this->basePath}/state/{$this->currentIndex}_{$this->currentData['phase_short']}";
+        $data = $this->currentData['current_state_encoded'];
+        Storage::put("$baseAdjudicatedPath.txt", $data);
+
         if (!empty($this->previousData)) {
             $previousIndex = $this->currentIndex - 1;
             $baseWithOrdersPath = "{$this->basePath}/{$previousIndex}_{$this->previousData['phase_short']}_1_with_orders";
@@ -61,7 +67,7 @@ class GameService
 
     public function isCompleted(): bool
     {
-        return ($this->currentData['phase_long'] ?? '') == "COMPLETED";
+        return ($this->currentData['phase_short'] ?? '') == "COMPLETED";
     }
 
 

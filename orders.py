@@ -1,10 +1,11 @@
-from genericpath import exists
-from math import e, radians
 import random
+from pathlib import Path
 from typing import Dict
 from diplomacy import Game
 from diplomacy.engine.game import Power
 from diplomacy.utils.export import to_saved_game_format, from_saved_game_format
+import json
+import base64
 
 # PARAMETERS
 A = 1
@@ -161,24 +162,86 @@ def get_best_orders(game: Game, power: Power):
                 # next_province_chance = ((dva -dvb) / dva) * 500
                 next_province_chance = ((dva -dvb) / dva) * 100
                 random_number = random.randint(0,100)
-                if random_number > THRESHOLD_PLAY_ALTERNATIVE or random_number < next_province_chance:
+                if random_number > THRESHOLD_PLAY_ALTERNATIVE or random_number < next_province_chance * 0.5:
                     destination_selected = True
                     destinations[loc] = list(ranked_provinces.keys())[i]
                 i += 1
                 
     # Returning orders
         orders = []
-        for unit_loc, dest_loc in destinations.items():
-            u = unit_positions[unit_loc]
-            if unit_loc == dest_loc:
-                # Unit should hold
+        ordered = {}
+
+        # source => destination
+        should_hold = {k: v for k, v in destinations.items() if v == k}
+        # source => destination without holds
+        should_secure_position = {k: v for k, v in destinations.items() if v != k}
+        
+        # destination => [moveable, ber, bul]
+        target_secure = {} 
+        for key, value in sorted(should_secure_position.items()):
+            target_secure.setdefault(value, []).append(key)
+
+
+        # target_defend = [value for value in target_secure.keys() if value in should_hold]
+        target_attack = [value for value in target_secure.keys() if value not in should_hold]
+
+        # target => source
+        target_move_order = {}
+
+        # target => [sources]
+        target_support_move = {}
+        # target => [sources]
+        target_support_hold = {}
+
+        # Determine Mover as the province with the lowest Destination Value
+        for target, sources in target_secure.items():
+            if target in target_attack:
+                # sources = ['BUL', 'MAR', 'BEL', 'STP']
+                mover = {key: destination_values[key] for key in sources}
+                target_move_order[target] = min(mover, key=mover.get)
                 
-                # Determine if could give support
+        # Determine all supports
+        for target, sources in target_secure.items():
+            for source in (x for x in sources if x not in target_move_order.get(target, [])):
+                if target in should_hold:
+                    # SH
+                    target_support_hold.setdefault(target, []).append(source)
+                else:
+                    target_support_move.setdefault(target, []).append(source)
+
+
+        # TODO: Some support moves for hold orders
+        
+
+        for target, source in target_move_order.items():
+            unit = unit_positions[source]
+            orders.append("{0} {1} - {2}".format(unit["type"], unit["loc"], target))
+
+        for target, sources in target_support_move.items():
+            for source in sources:
+                unit = unit_positions[source]
+                supporting = unit_positions[target_move_order[target]]
+                orders.append("{0} {1} S {2} {3} - {4}".format(unit["type"], unit["loc"], supporting["type"], supporting["loc"], target))
+
+        for target, sources in target_support_hold.items():
+            for source in sources:
+                unit = unit_positions[source]
+                supporting = unit_positions[target]
+                orders.append("{0} {1} S {2} {3}".format(unit["type"], unit["loc"], supporting["type"], supporting["loc"]))
+
+        # for unit_loc, dest_loc in destinations.items():
+        #     u = unit_positions[unit_loc]
+        #     if unit_loc == dest_loc:
+        #         # Unit should hold
+                
+        #         # Determine if could give support
                 
 
-                orders.append("{0} {1} H".format(u["type"], u["loc"]))
-            else:
-                orders.append("{0} {1} - {2}".format(u["type"], u["loc"], dest_loc))
+        #         orders.append("{0} {1} H".format(u["type"], u["loc"]))
+        #     else:
+        #         # Same destinations
+        #         orders.append("{0} {1} - {2}".format(u["type"], u["loc"], dest_loc))
+        #         ordered
         return orders
 
 
@@ -200,6 +263,7 @@ def get_best_orders(game: Game, power: Power):
         build_count = len(power.centers) - len(power.units)
         orders = []
         # Needs destroy
+        # Todo: Little randomness
         if build_count < 0:
             units_to_order = list(filter(lambda x: x.get("power") == power.name ,unit_positions.values()))
             locations = [d['loc'] for d in units_to_order] 
@@ -214,6 +278,7 @@ def get_best_orders(game: Game, power: Power):
 
 
         # Needs build
+        # Todo: Little randomness
         elif build_count > 0:
             orders = []
             builds_needed = abs(build_count)
@@ -254,7 +319,11 @@ def calculate_parameter(phase_long: str, parameter: dict):
     if "WINTER" in phase_long:
         return parameter.get("WINTER") or 0
 
-game = Game(map_name="standard")
+# game = Game(map_name="standard")
+path = r'.\integration\storage\app\dumbsingle\2021-05-20T18-41-57\state\14_S1905M.txt'
+data = Path(path).read_text()
+data = json.loads(base64.b64decode(data).decode())
+game = from_saved_game_format(data)
 # game.clear_centers("FRANCE")
 # game.clear_units("FRANCE")
 # game.set_units("FRANCE", ['A BUR', 'A PIE', 'A LVN', 'A PRU'], True)
