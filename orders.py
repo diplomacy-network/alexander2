@@ -161,7 +161,15 @@ def get_best_orders(game: Game, power: Power):
                 i += 1
                 
     # Returning orders
-        return ["A PAR - MAR"]
+        orders = []
+        for unit_loc, dest_loc in destinations.items():
+            u = unit_positions[unit_loc]
+            if unit_loc == dest_loc:
+                orders.append("{0} {1} H".format(u["type"], u["loc"]))
+            else:
+                orders.append("{0} {1} - {2}".format(u["type"], u["loc"], dest_loc))
+        return orders
+
 
 
     else:
