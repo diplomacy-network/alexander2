@@ -56,6 +56,7 @@ class GameService
 
         $this->currentData = $response->json();
         $this->currentIndex++;
+        $this->orders = [];
     }
 
     public function isCompleted(): bool
@@ -63,25 +64,24 @@ class GameService
         return ($this->currentData['phase_long'] ?? '') == "COMPLETED";
     }
 
-    public function assignRandomOrders()
+
+    public function assignRandomOrders(string $power)
     {
-        $this->orders = [];
-        foreach ($this->currentData['possible_orders'] as $power => $payload) {
-            foreach ($payload as $target) {
-                $this->orders[$power][] = collect($target)->random();
+        foreach ($this->currentData['possible_orders'][$power] as $payload) {
+            if(count($payload) > 0){
+                $this->orders[$power][] = $payload[array_rand($payload)];
             }
         }
     }
 
-    public function assignDumbbotOrders(string $power){
+    public function assignDumbbotOrders(string $power)
+    {
         $response = $this->client->post('dumbbot', [
             'current_state_encoded' => $this->currentData['current_state_encoded'],
             'power' => Str::of($power)->upper(),
         ]);
 
         $this->orders[$power] = $response->json();
-
-
 
 
     }

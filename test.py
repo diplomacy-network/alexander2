@@ -53,15 +53,28 @@ def return_possible_orders(game):
     return possibilities
 
 game = Game(map_name="standard")
-game.set_orders("FRANCE", ["A PAR-GAS", "A mar-bur"])
-# get_all_orders(game, "FRANCE")
-power = game.get_power("RUSSIA")
-power.clear_units()
-power.clear_centers()
-game.win = 4
+# game.set_orders("FRANCE", ["A PAR-GAS", "A mar-bur"])
+game.set_units("FRANCE", ['A BUR'])
+game.set_units("GERMANY", ['A RUH', 'A BEL'])
+game.set_units("ITALY", ['A PIE', 'F LYO'])
 
-# print(return_possible_orders(game))
+# get_all_orders(game, "FRANCE")
+game.set_orders("FRANCE", [
+    'A PAR S A BUR', 
+    # 'A BUR S A MAR'
+    ])
+# game.set_orders("GERMANY", [
+#     'A MUN - BUR', 
+#     'A RUH S A MUN - BUR', 
+#     'A BEL S A MUN - BUR'
+#     ])
+game.set_orders("ITALY", ['A PIE - MAR', ' F LYO S A PIE - MAR'])
+
 game.process()
+h = game.get_phase_history()
+power = game.get_power("FRANCE")
+
+t = game.map.abut_list("BRE", True)
 
 # Herbst
 game.set_orders("FRANCE", ["A GAS-SPA", 

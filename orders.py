@@ -13,9 +13,14 @@ C = 16
 
 THRESHOLD_PLAY_ALTERNATIVE = 50
 
+# Sw = {"SPRING": 1000, "FALL": 1000, "WINTER": 0}
+# Cw = {"SPRING": 1000, "FALL": 1000, "WINTER": 0}
+# Aw = {"SPRING": 700, "FALL": 600, "WINTER": 0}
+# Dw = {"SPRING": 300, "FALL": 400, "WINTER": 1000}
+
 Sw = {"SPRING": 1000, "FALL": 1000, "WINTER": 0}
 Cw = {"SPRING": 1000, "FALL": 1000, "WINTER": 0}
-Aw = {"SPRING": 700, "FALL": 600, "WINTER": 0}
+Aw = {"SPRING": 700, "FALL": 600, "WINTER": 100}
 Dw = {"SPRING": 300, "FALL": 400, "WINTER": 1000}
 
 Pw = [1000, 100, 30, 10, 6, 5, 4, 3, 2, 1]
@@ -48,7 +53,7 @@ def get_best_orders(game: Game, power: Power):
     # Assigning Attack and Defense Values
     attack_values = {}
     defense_values = {}
-    state = game.get_state()
+
     for loc in game.map.locs:
         loc = loc.upper()
         attack_values[loc] = 0
@@ -125,7 +130,7 @@ def get_best_orders(game: Game, power: Power):
         value = 0
         for i in range(0,10):
             value += Pw[i] * proximity_map[i][loc]
-        value += strength_values[loc] * sw - competition_values[loc] * cw
+        value += strength_values[loc] * sw - competition_values[loc] * cw 
         destination_values[loc] = value
 
     # Remove all impassable Destinations aka. SHUT
@@ -153,7 +158,8 @@ def get_best_orders(game: Game, power: Power):
                 i = 0 if i >= (len(ranked_provinces) - 1) else i
                 dva = ranked_provinces[list(ranked_provinces.keys())[i]]
                 dvb = ranked_provinces[list(ranked_provinces.keys())[i + 1]]
-                next_province_chance = ((dva -dvb) / dva) * 500
+                # next_province_chance = ((dva -dvb) / dva) * 500
+                next_province_chance = ((dva -dvb) / dva) * 100
                 random_number = random.randint(0,100)
                 if random_number > THRESHOLD_PLAY_ALTERNATIVE or random_number < next_province_chance:
                     destination_selected = True
@@ -165,6 +171,11 @@ def get_best_orders(game: Game, power: Power):
         for unit_loc, dest_loc in destinations.items():
             u = unit_positions[unit_loc]
             if unit_loc == dest_loc:
+                # Unit should hold
+                
+                # Determine if could give support
+                
+
                 orders.append("{0} {1} H".format(u["type"], u["loc"]))
             else:
                 orders.append("{0} {1} - {2}".format(u["type"], u["loc"], dest_loc))
@@ -172,8 +183,62 @@ def get_best_orders(game: Game, power: Power):
 
 
 
-    else:
-        print("ELSE")
+    elif game.phase_type == "R":
+        orders = []
+        retreat_locations = []
+        for unit_description, targets in power.retreats.items():
+            target_locations = {key: destination_values[key] for key in targets if key not in retreat_locations}
+            loc = max(target_locations, key=target_locations.get, default=None)
+            if loc is not None:
+                retreat_locations.append(loc)
+                orders.append("{0} - {1}".format(unit_description, loc))
+            else:
+                orders.append("{0} D".format(unit_description))
+        return orders
+
+    elif game.phase_type == "A":
+        build_count = len(power.centers) - len(power.units)
+        orders = []
+        # Needs destroy
+        if build_count < 0:
+            units_to_order = list(filter(lambda x: x.get("power") == power.name ,unit_positions.values()))
+            locations = [d['loc'] for d in units_to_order] 
+            disbands_needed = abs(build_count)
+            target_locations = {key: destination_values[key] for key in locations}
+            # Currently this is just two random values as it seems all values are dependend on the parameters
+            locations = sorted(target_locations, key=target_locations.get)[:disbands_needed]
+            for l in locations:
+                p = unit_positions[l]
+                orders.append("{0} {1} D".format(p['type'], p['loc']))
+            return orders
+
+
+        # Needs build
+        elif build_count > 0:
+            orders = []
+            builds_needed = abs(build_count)
+            # Get owned centers and home centers AND has no unit on it
+            buildable = [loc for loc in power.centers if loc in power.homes and unit_positions.get(loc) is None]
+            target_locations = {key: destination_values[key] for key in buildable}
+            locations = sorted(target_locations, key=target_locations.get, reverse=True)[:builds_needed]
+
+            # Determine Unit Type random
+            for l in locations:
+                fleetstring = "F " + l
+                armystring = "A " + l
+                order = None
+                fleet = game.map.is_valid_unit(fleetstring)
+                army = game.map.is_valid_unit(armystring)
+                if fleet and army:
+                    order = fleetstring if random.random() > 0.5 else armystring
+                elif army:
+                    order = armystring
+                elif fleet:
+                    order = fleetstring
+                orders.append(order + " B")
+            return orders
+
+
 
 
 
@@ -190,7 +255,15 @@ def calculate_parameter(phase_long: str, parameter: dict):
         return parameter.get("WINTER") or 0
 
 game = Game(map_name="standard")
+# game.clear_centers("FRANCE")
+# game.clear_units("FRANCE")
+# game.set_units("FRANCE", ['A BUR', 'A PIE', 'A LVN', 'A PRU'], True)
+# game.set_units("FRANCE", ['A LVN'], True)
+# game.set_centers("FRANCE", ["PAR", "BRE", "MAR"], True)
+# game.process()
+# game.process()
 power = game.get_power("FRANCE")
+# game.process()
 
 
 get_best_orders(game, power)
