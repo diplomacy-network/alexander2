@@ -309,7 +309,6 @@ def get_best_orders(game: Game, power: Power):
 
 
 
-    print(game.map_name, power.name)
 
 def calculate_parameter(phase_long: str, parameter: dict):
     if "SPRING" in phase_long:
