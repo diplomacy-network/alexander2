@@ -88,3 +88,24 @@ Refer to ## [POST] /adjudicate
   "winning_phase": "W1901A",
 }
 ```
+## [POST] /dumbbot
+
+**Request:** 
+
+```json
+{
+    "current_state_encoded": "<to_saved_game_format_encoded_as_base64>",
+    "power": "FRANCE",
+}
+```
+
+**Response:** 
+
+```json
+{
+  [
+    "A MAR - PAR",
+    "F PIC - BRE"
+  ]
+}
+```
