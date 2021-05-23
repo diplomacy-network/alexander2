@@ -319,19 +319,19 @@ def calculate_parameter(phase_long: str, parameter: dict):
         return parameter.get("WINTER") or 0
 
 # game = Game(map_name="standard")
-path = r'.\integration\storage\app\dumbsingle\2021-05-20T18-41-57\state\14_S1905M.txt'
-data = Path(path).read_text()
-data = json.loads(base64.b64decode(data).decode())
-game = from_saved_game_format(data)
-# game.clear_centers("FRANCE")
-# game.clear_units("FRANCE")
-# game.set_units("FRANCE", ['A BUR', 'A PIE', 'A LVN', 'A PRU'], True)
-# game.set_units("FRANCE", ['A LVN'], True)
-# game.set_centers("FRANCE", ["PAR", "BRE", "MAR"], True)
-# game.process()
-# game.process()
-power = game.get_power("FRANCE")
-# game.process()
+# path = r'.\integration\storage\app\dumbsingle\2021-05-20T18-41-57\state\14_S1905M.txt'
+# data = Path(path).read_text()
+# data = json.loads(base64.b64decode(data).decode())
+# game = from_saved_game_format(data)
+# # game.clear_centers("FRANCE")
+# # game.clear_units("FRANCE")
+# # game.set_units("FRANCE", ['A BUR', 'A PIE', 'A LVN', 'A PRU'], True)
+# # game.set_units("FRANCE", ['A LVN'], True)
+# # game.set_centers("FRANCE", ["PAR", "BRE", "MAR"], True)
+# # game.process()
+# # game.process()
+# power = game.get_power("FRANCE")
+# # game.process()
 
 
-get_best_orders(game, power)
+# get_best_orders(game, power)
