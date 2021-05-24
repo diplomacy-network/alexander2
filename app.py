@@ -1,3 +1,4 @@
+from diplomacy.engine.power import Power
 from diplomacy.utils.strings import PREVIOUS_PHASE
 from flask import Flask, jsonify, abort, request, redirect
 # from flask import jsonify
@@ -17,7 +18,7 @@ app = Flask(__name__)
 
 # A list of valid variants
 valid_variants = ['standard']
-version = 'v0.3'
+version = 'v0.4'
 
 
 @app.route('/')
@@ -35,15 +36,15 @@ def docs():
 
 @app.route('/'+ version + '/variants')
 def variants():
-    json_array = dict()
+    json_array = []
     for variant in valid_variants:
         game = Game(map_name=variant)
-        json_array[variant] = {
+        json_array.append({
+            "name": variant,
             "powers": list(game.get_map_power_names()),
             "default_end_of_game": game.win
-            }
-
-    return jsonify(json_array)
+            })
+    return jsonify({"variants": json_array})
 
 @app.route('/'+ version + '/adjudicate/<variant_name>')
 def basic_instance(variant_name):
@@ -66,8 +67,8 @@ def adjudicator():
     game.clear_orders()
     game.rules = []
     print(jsonb["orders"])
-    for power, instructions in jsonb["orders"].items():
-        game.set_orders(power, instructions)
+    for orders in jsonb["orders"]:
+        game.set_orders(orders["power"], orders["instructions"])
     previous_phase = game.get_current_phase()
     previous_svg = game.render(incl_orders=True, incl_abbrev=True)
     game.process()
@@ -83,38 +84,61 @@ def dumbbot():
     powername = jsonb["power"]
     game = from_saved_game_format(data)
     power = game.get_power(powername)
-    return jsonify(get_best_orders(game, power) or [])
+    return jsonify({
+        "orders": get_best_orders(game, power) or [],
+        "power": powername
+    })
 
 def return_possible_orders(game):
     # TODO: Better variable names, for now it does its job
     possible_orders = game.get_all_possible_orders()
 
-    possibilities = dict()
+    possibilities = []
     for power in game.get_map_power_names():
         loc = []
         dicto = {
-            "name": power
+            "power": power
         }
-        units = dict()
+        units = []
         for loc in game.get_orderable_locations(power):
-            units[loc] = possible_orders[loc]
-        # dicto["units"] = units
-        possibilities[power] = units
+            units.append({
+                "space": loc,
+                "possible_orders": possible_orders[loc]
+            })
+            # units[loc] = possible_orders[loc]
+        dicto["units"] = units
+        possibilities.append(dicto)
     return possibilities
 
-def return_phase_data(game):
+def return_phase_data(game: Game) -> list:
     # TODO: Better variable names, for now it does its job
 
-    possibilities = dict()
+    possibilities = []
     for power in game.powers:
+        p: Power
         p = game.powers[power]
-        possibilities[p.name] = {
+        possibilities.append({
+            "power": p.name,
             "unit_count": len(p.units),
             "supply_center_count": len(p.centers),
             "home_center_count": len(p.homes)
-        }
-    
+        })
     return possibilities
+
+def return_applied_orders(game:Game, previous_phase="") -> list:
+    
+    if previous_phase == "":
+        return []
+    else:
+        orderHistory = game.order_history[previous_phase]
+        allOrders = []
+        for power, orders in orderHistory.items():
+            allOrders.append({
+                "power": power,
+                "orders": orders
+            })
+        return allOrders
+
 
 def return_api_result(game: Game, previous_svg="", previous_phase=""):
     adjudicated = game.render(incl_orders=True, incl_abbrev=True)
@@ -129,7 +153,7 @@ def return_api_result(game: Game, previous_svg="", previous_phase=""):
         "svg_adjudicated": adjudicated,
         "current_state_encoded": base64.b64encode(json.dumps(savedGame).encode()).decode(),
         "possible_orders": return_possible_orders(game),
-        "applied_orders": game.order_history[previous_phase] if previous_phase != "" else {},
+        "applied_orders": return_applied_orders(game, previous_phase),
         "winners": game.outcome[1:],
         "winning_phase": game.outcome[0] if len(game.outcome) > 1 else "",
     }
