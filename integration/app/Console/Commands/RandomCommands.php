@@ -33,7 +33,7 @@ class RandomCommands extends Command
 
     public function handle()
     {
-        $game = new GameService('random');
+        $game = new GameService('random', 'standard');
         $game->initGame();
         $game->saveImgFiles();
         $i = 0;
@@ -41,8 +41,8 @@ class RandomCommands extends Command
         $bar = $this->output->createProgressBar($max);
         $bar->start();
         while(!$game->isCompleted() && $i <= $max){
-            $game->assignRandomOrders();
-//            $game->assignDumbbotOrders("FRANCE");
+            // $game->assignRandomOrders();
+           $game->assignDumbbotOrders("FRANCE");
             $game->adjudicate();
             $game->saveImgFiles();
             $i++;
