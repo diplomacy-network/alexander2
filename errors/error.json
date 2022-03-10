@@ -1,0 +1,65 @@
+{
+    "previous_state_encoded": "eyJpZCI6ICJiMmlOdmtIYmVsM2x1TjB1IiwgIm1hcCI6ICJzdGFuZGFyZCIsICJydWxlcyI6IFtdLCAicGhhc2VzIjogW3sibmFtZSI6ICJTMTkwMU0iLCAic3RhdGUiOiB7InRpbWVzdGFtcCI6IDE2NDY2NDU2MzAyNzU0MzcsICJ6b2JyaXN0X2hhc2giOiAiMTkxOTExMDQ4OTE5ODA4MjY1OCIsICJub3RlIjogIiIsICJuYW1lIjogIlMxOTAxTSIsICJ1bml0cyI6IHsiQVVTVFJJQSI6IFsiQSBCVUQiLCAiQSBWSUUiLCAiRiBUUkkiXSwgIkVOR0xBTkQiOiBbIkYgRURJIiwgIkYgTE9OIiwgIkEgTFZQIl0sICJGUkFOQ0UiOiBbIkYgQlJFIiwgIkEgTUFSIiwgIkEgUEFSIl0sICJHRVJNQU5ZIjogWyJGIEtJRSIsICJBIEJFUiIsICJBIE1VTiJdLCAiSVRBTFkiOiBbIkYgTkFQIiwgIkEgUk9NIiwgIkEgVkVOIl0sICJSVVNTSUEiOiBbIkEgV0FSIiwgIkEgTU9TIiwgIkYgU0VWIiwgIkYgU1RQL1NDIl0sICJUVVJLRVkiOiBbIkYgQU5LIiwgIkEgQ09OIiwgIkEgU01ZIl19LCAicmV0cmVhdHMiOiB7IkFVU1RSSUEiOiB7fSwgIkVOR0xBTkQiOiB7fSwgIkZSQU5DRSI6IHt9LCAiR0VSTUFOWSI6IHt9LCAiSVRBTFkiOiB7fSwgIlJVU1NJQSI6IHt9LCAiVFVSS0VZIjoge319LCAiY2VudGVycyI6IHsiQVVTVFJJQSI6IFsiQlVEIiwgIlRSSSIsICJWSUUiXSwgIkVOR0xBTkQiOiBbIkVESSIsICJMT04iLCAiTFZQIl0sICJGUkFOQ0UiOiBbIkJSRSIsICJNQVIiLCAiUEFSIl0sICJHRVJNQU5ZIjogWyJCRVIiLCAiS0lFIiwgIk1VTiJdLCAiSVRBTFkiOiBbIk5BUCIsICJST00iLCAiVkVOIl0sICJSVVNTSUEiOiBbIk1PUyIsICJTRVYiLCAiU1RQIiwgIldBUiJdLCAiVFVSS0VZIjogWyJBTksiLCAiQ09OIiwgIlNNWSJdfSwgImhvbWVzIjogeyJBVVNUUklBIjogWyJCVUQiLCAiVFJJIiwgIlZJRSJdLCAiRU5HTEFORCI6IFsiRURJIiwgIkxPTiIsICJMVlAiXSwgIkZSQU5DRSI6IFsiQlJFIiwgIk1BUiIsICJQQVIiXSwgIkdFUk1BTlkiOiBbIkJFUiIsICJLSUUiLCAiTVVOIl0sICJJVEFMWSI6IFsiTkFQIiwgIlJPTSIsICJWRU4iXSwgIlJVU1NJQSI6IFsiTU9TIiwgIlNFViIsICJTVFAiLCAiV0FSIl0sICJUVVJLRVkiOiBbIkFOSyIsICJDT04iLCAiU01ZIl19LCAiaW5mbHVlbmNlIjogeyJBVVNUUklBIjogWyJCVUQiLCAiVklFIiwgIlRSSSJdLCAiRU5HTEFORCI6IFsiRURJIiwgIkxPTiIsICJMVlAiXSwgIkZSQU5DRSI6IFsiQlJFIiwgIk1BUiIsICJQQVIiXSwgIkdFUk1BTlkiOiBbIktJRSIsICJCRVIiLCAiTVVOIl0sICJJVEFMWSI6IFsiTkFQIiwgIlJPTSIsICJWRU4iXSwgIlJVU1NJQSI6IFsiV0FSIiwgIk1PUyIsICJTRVYiLCAiU1RQIl0sICJUVVJLRVkiOiBbIkFOSyIsICJDT04iLCAiU01ZIl19LCAiY2l2aWxfZGlzb3JkZXIiOiB7IkFVU1RSSUEiOiAwLCAiRU5HTEFORCI6IDAsICJGUkFOQ0UiOiAwLCAiR0VSTUFOWSI6IDAsICJJVEFMWSI6IDAsICJSVVNTSUEiOiAwLCAiVFVSS0VZIjogMH0sICJidWlsZHMiOiB7IkFVU1RSSUEiOiB7ImNvdW50IjogMCwgImhvbWVzIjogW119LCAiRU5HTEFORCI6IHsiY291bnQiOiAwLCAiaG9tZXMiOiBbXX0sICJGUkFOQ0UiOiB7ImNvdW50IjogMCwgImhvbWVzIjogW119LCAiR0VSTUFOWSI6IHsiY291bnQiOiAwLCAiaG9tZXMiOiBbXX0sICJJVEFMWSI6IHsiY291bnQiOiAwLCAiaG9tZXMiOiBbXX0sICJSVVNTSUEiOiB7ImNvdW50IjogMCwgImhvbWVzIjogW119LCAiVFVSS0VZIjogeyJjb3VudCI6IDAsICJob21lcyI6IFtdfX0sICJnYW1lX2lkIjogImIyaU52a0hiZWwzbHVOMHUiLCAibWFwIjogInN0YW5kYXJkIiwgInJ1bGVzIjogW119LCAib3JkZXJzIjogeyJBVVNUUklBIjogbnVsbCwgIkVOR0xBTkQiOiBudWxsLCAiRlJBTkNFIjogbnVsbCwgIkdFUk1BTlkiOiBudWxsLCAiSVRBTFkiOiBudWxsLCAiUlVTU0lBIjogbnVsbCwgIlRVUktFWSI6IG51bGx9LCAicmVzdWx0cyI6IHt9LCAibWVzc2FnZXMiOiBbXX1dfQ==",
+    "orders": [
+        {
+            "json": null,
+            "power": "RUSSIA",
+            "instructions": [
+                "F STP - BOT \/\/ Move",
+                "A WAR - GAL \/\/ Move",
+                "A MOS - UKR \/\/ Move",
+                "F SEV - BLA \/\/ Move"
+            ]
+        },
+        {
+            "json": null,
+            "power": "GERMANY",
+            "instructions": [
+                "F Kiel nach D\u00e4nemark ",
+                "\u00c1 Berlin nach Kiel ",
+                "\u00c1 M\u00fcnchen nach Ruhr"
+            ]
+        },
+        {
+            "json": null,
+            "power": "ENGLAND",
+            "instructions": [
+                ""
+            ]
+        },
+        {
+            "json": null,
+            "power": "ITALY",
+            "instructions": [
+                "NAP - TYS",
+                "VEN - TYR",
+                "ROM - TUS"
+            ]
+        },
+        {
+            "json": null,
+            "power": "FRANCE",
+            "instructions": [
+                ""
+            ]
+        },
+        {
+            "json": null,
+            "power": "TURKEY",
+            "instructions": [
+                "Ank-Bla",
+                "Con-Bul",
+                "Smy-Arm"
+            ]
+        },
+        {
+            "json": null,
+            "power": "AUSTRIA",
+            "instructions": [
+                ""
+            ]
+        }
+    ],
+    "scs_to_win": 18,
+    "json": null
+}

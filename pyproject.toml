@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "alexander2"
+version = "0.1.0"
+description = ""
+authors = ["Alexander Wulf <alex.f.wulf@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Flask = "^2.0.2"
+gunicorn = "^20.1.0"
+diplomacy = "^1.1.2"
+Markdown = "^3.3.6"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
