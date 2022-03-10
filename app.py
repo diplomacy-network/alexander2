@@ -68,7 +68,13 @@ def adjudicator():
     game.rules = []
     print(jsonb["orders"])
     for orders in jsonb["orders"]:
-        game.set_orders(orders["power"], orders["instructions"])
+        try:
+            instructions = []
+            for instr in orders["instructions"]:
+                instructions.append(instr.split("//", 1)[0])
+            game.set_orders(orders["power"], instructions)
+        except IndexError:
+            pass
     previous_phase = game.get_current_phase()
     previous_svg = game.render(incl_orders=True, incl_abbrev=True)
     game.process()
