@@ -1,6 +1,6 @@
 from diplomacy.engine.power import Power
 from diplomacy.utils.strings import PREVIOUS_PHASE
-from flask import Flask, jsonify, abort, request, redirect
+from flask import Flask, jsonify, abort, request, redirect, current_app, g as app_ctx
 # from flask import jsonify
 from diplomacy import Game
 from diplomacy.utils.export import to_saved_game_format, from_saved_game_format
@@ -9,6 +9,7 @@ import base64
 import markdown
 import markdown.extensions.fenced_code
 from orders import get_best_orders
+import time
 
 app = Flask(__name__)
 
@@ -33,6 +34,21 @@ def docs():
     )
 
     return md_template_string
+
+@app.before_request
+def logging_before():
+    # Store the start time for the request
+    app_ctx.start_time = time.perf_counter()
+
+
+@app.after_request
+def logging_after(response):
+    # Get total time in milliseconds
+    total_time = time.perf_counter() - app_ctx.start_time
+    time_in_ms = int(total_time * 1000)
+    # Log the time taken for the endpoint 
+    current_app.logger.info('%s ms %s %s %s', time_in_ms, request.method, request.path, dict(request.args))
+    return response
 
 @app.route('/'+ version + '/variants')
 def variants():
@@ -61,13 +77,13 @@ def adjudicator():
     if not request.is_json:
         abort(418, 'Please use Application Type JSON')
     jsonb = request.get_json()
-    print(jsonb)
+    # print(jsonb)
     data = json.loads(base64.b64decode(jsonb["previous_state_encoded"]).decode())
     game = from_saved_game_format(data)
     game.win = jsonb['scs_to_win']
     game.clear_orders()
     game.rules = []
-    print(jsonb["orders"])
+    # print(jsonb["orders"])
     for orders in jsonb["orders"]:
         try:
             instructions = []
