@@ -181,3 +181,4 @@ def return_api_result(game: Game, previous_svg="", previous_phase=""):
         "winning_phase": game.outcome[0] if len(game.outcome) > 1 else "",
     }
 
+
