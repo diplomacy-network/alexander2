@@ -2,7 +2,7 @@
 
 Eine mapAPI für DNW2.0.
 
-Zurzeit erreichbar unter [http://alexander2.herokuapp.com/v0.3](https://alexander2.vercel.app/v0.4).
+Zurzeit erreichbar unter [https://alexander2.vercel.app/v0.4](https://alexander2.vercel.app/v0.4).
 
 ## [GET] /variants
 
