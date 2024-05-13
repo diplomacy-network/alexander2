@@ -27,6 +27,7 @@ def root():
     return redirect('/' + version)
 
 @app.route('/' + version)
+@app.route('/' + version + '/')
 def docs():
     readme_file = open("README.md", "r")
     md_template_string = markdown.markdown(
