@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 # A list of valid variants
 valid_variants = ['standard']
-version = 'v0.4'
+version = 'v0.5'
 
 
 @app.route('/')
@@ -167,6 +167,8 @@ def return_applied_orders(game:Game, previous_phase="") -> list:
 def return_api_result(game: Game, previous_svg="", previous_phase=""):
     adjudicated = game.render(incl_orders=True, incl_abbrev=True)
     savedGame = to_saved_game_format(game)
+
+    game
     
     return {
         "phase_type": game.phase_type,
