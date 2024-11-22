@@ -26,8 +26,8 @@ version = 'v0.6'
 def root():
     return redirect('/' + version)
 
-@app.route('/healthz')
-def root():
+@app.route('/health')
+def health():
     return 'OK'
 
 @app.route('/' + version)
