@@ -5,4 +5,4 @@ COPY ./requirements.txt requirements.txt
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 COPY . .
 EXPOSE 80
-CMD ["gunicorn", "--bind", "0.0.0.0:80", "app:app"]
+CMD ["python3", "-m" , "flask", "run", "--host=0.0.0.0"]

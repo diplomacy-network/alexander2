@@ -19,12 +19,16 @@ app = Flask(__name__)
 
 # A list of valid variants
 valid_variants = ['standard']
-version = 'v0.5'
+version = 'v0.6'
 
 
 @app.route('/')
 def root():
     return redirect('/' + version)
+
+@app.route('/health')
+def root():
+    return 'OK'
 
 @app.route('/' + version)
 @app.route('/' + version + '/')

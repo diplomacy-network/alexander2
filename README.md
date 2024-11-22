@@ -1,4 +1,4 @@
-# alexander v0.4
+# alexander v0.6
 
 Eine mapAPI für DNW2.0.
 
